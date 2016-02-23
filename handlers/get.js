@@ -1,13 +1,19 @@
+var repo = require('../data/repo');
+
 var get = {
   allQuestions : function(req, res, next) {
-    res.send('got all questions from the database');
+    repo.getAllQuestions(function(result) {
+      res.send(result);
+    });
     next();
   },
 
   question : function(req, res, next) {
-    var id = req.params.id;
-    res.send('got question' + id + ' from the database');
-    next();
+    var id = req.params.questionId;
+    repo.getQuestion(id, function(question) {
+      res.send(question);
+      next();
+    });
   }
 };
 
