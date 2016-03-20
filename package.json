@@ -1,0 +1,42 @@
+{
+  "description" : "An admin page for creating trivia questions.",
+  "main": "server.js",
+  "scripts": {
+    "lint": "eslint app",
+    "dev": "webpack --watch & nodemon ./app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cameron",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^0.14.6",
+    "react-dom": "^0.14.7",
+    "restify": "^4.0.3"
+  },
+  "devDependencies": {
+    "babel-core": "6.5.1",
+    "babel-loader": "~6.2.1",
+    "babel-plugin-react-transform": "^2.0.0",
+    "babel-plugin-transform-regenerator": "6.5.0",
+    "babel-preset-es2015": "~6.3.13",
+    "babel-preset-es2015-loose": "~7.0.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-register": "6.5.1",
+    "babylon": "6.5.0",
+    "css-loader": "^0.23.1",
+    "del": "^2.2.0",
+    "eslint": "^2.2.0",
+    "eslint-config-airbnb": "^6.0.2",
+    "eslint-plugin-react": "^4.1.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "gulp-zip": "^3.1.0",
+    "nodemon": "^1.9.1",
+    "react-transform-catch-errors": "^1.0.2",
+    "redbox-react": "^1.2.2",
+    "run-sequence": "^1.1.5",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.12",
+    "webpack-stream": "^3.1.0"
+  }
+}

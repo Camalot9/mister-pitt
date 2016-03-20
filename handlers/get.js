@@ -2,7 +2,14 @@ var repo = require('../data/repo');
 
 var get = {
   allQuestions : function(req, res, next) {
-    repo.getAllQuestions(function(result) {
+    repo.getQuestions(req.params.limit | 10, function(questions) {
+      res.send(questions);
+      next();
+    });
+  },
+
+  questionsSummary : function(req, res, next) {
+    repo.getAllQuestionsSummary(function(result) {
       res.send(result);
     });
     next();
