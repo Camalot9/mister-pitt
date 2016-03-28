@@ -32,11 +32,13 @@ export default class QuestionList extends Component {
 
 
   render() {
-    var questionNodes = this.props.questions.map((question) => {
+    var questionList = !this.props.questions ? [] : this.props.questions;
+    var questionNodes = questionList.map((question) => {
       return (
-        <Question question={question.question} 
+        <Question question={question.text} 
                   questionId={question.id}
                   difficulty={question.difficulty}
+                  category={question.category}
                   answers={question.answers}
                   key={question.id}
                   removed={question.removed}

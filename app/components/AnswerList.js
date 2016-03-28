@@ -36,7 +36,7 @@ export default class AnswerList extends Component {
 	render() {
 		var answerNodes = [];
 		var answerListThis = this;
-		if (this.state.answers) {
+		if (this.state.answers && this.state.answers.length > 0) {
 			var questionId = this.state.questionId;
 		    answerNodes = this.state.answers.map(function(answer) {
 		      return (
@@ -44,6 +44,7 @@ export default class AnswerList extends Component {
 		                answerId={answer.id}
 		                correct={answer.correct}
 		                pinned={answer.pinned}
+		                removed={answer.removed}
 		                questionId={questionId}
 		                key={answer.id}
 		                correctCallback={(e) => answerListThis.markOthersIncorrect(e)}>

@@ -1,4 +1,4 @@
-var repo = require('../data/repo');
+var repo = require('../../data/questionsDynamoRepo');
 
 var get = {
   allQuestions : function(req, res, next) {

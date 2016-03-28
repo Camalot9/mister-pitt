@@ -6,25 +6,38 @@ import Fetcher from '../data/Fetcher';
 var questionContains = function(searchString, question) {
   var str = searchString.toLowerCase();
   return question &&
-          ((question.question &&
-            question.question.toLowerCase().indexOf(str) > 0) ||
+          ((question.text &&
+            question.text.toLowerCase().indexOf(str) > 0) ||
           (question.category &&
             question.category.toLowerCase().indexOf(str) > 0));
 }
 
 var shouldSearch = function(searchString) {
   return searchString && searchString.trim().length > 2;
+}
+
+var findVisible = function(questions, searchString, showDeleted) {
+  var visible = [];
+  if (questions) {
+    questions.forEach(function(question) {
+          if ((!question.removed || showDeleted) && 
+              (!shouldSearch(searchString) || questionContains(searchString, question))) {
+            visible.push(question);
+          }
+        });
+  }
+  return visible;
 };
 
 export default class QuestionEntryPage extends Component {
   constructor() {
     super();
 
-    // Can't call setState on a component until its mounted
     this.state = { 
       questions : [],
       visible: [],
-      searchString: null
+      searchString: null,
+      showDeleted: false
     };
   }
 
@@ -32,19 +45,25 @@ export default class QuestionEntryPage extends Component {
     Fetcher.getQuestions(10, (questionsList) => {
       this.setState({
         questions: questionsList,
-        visible: questionsList
+        visible: findVisible(questionsList, this.state.searchString, this.state.showDeleted)
       });
     });
   }
 
   addQuestion(question) {
-    var newQuestionsList = this.state.questions.concat([question]);
-    var newVisible = this.state.visible;
-    if (!shouldSearch(this.state.searchString) || questionContains(this.state.searchString, question)) {
-      console.log('adding to visible');
-      newVisible = this.state.visible.concat([question]);
+
+    var newQuestionsList;
+    var newVisible;
+    if (question && question.success !== false) {
+      newQuestionsList = this.state.questions.concat([question]);
+      newVisible = this.state.visible;
+      if (!shouldSearch(this.state.searchString) || questionContains(this.state.searchString, question)) {
+        newVisible = this.state.visible.concat([question]);
+      } 
     } else {
-      console.log('not adding to visible');
+      newQuestionsList = this.state.questions;
+      newVisible = this.state.visible;
+      console.log('Looks like question add failed...TODO show some fail icon here!');
     }
 
     this.setState({
@@ -53,27 +72,23 @@ export default class QuestionEntryPage extends Component {
     });
   }
 
-  handleSearch(event) {
-    var searchString = event.target.value;
-
-    var visible;
-    if (shouldSearch(searchString)) {
-      visible = [];
-      if (this.state.questions) {
-        this.state.questions.forEach(function(question) {
-          if (questionContains(searchString, question)) {
-            visible.push(question);
-          }
-        });
-      }
-    }
-    else {
-      visible = this.state.questions;
-    }
+  handleShowDeletedToggle(event) {
+    var show = event.target.checked;
+    var visible = findVisible(this.state.questions, this.state.searchString, show);
 
     this.setState({
-      visible: visible,
-      searchString: searchString
+      showDeleted: show,
+      visible: visible
+    });
+  }
+
+  handleSearch(event) {
+    var searchString = event.target.value;
+    var visible = findVisible(this.state.questions, searchString, this.state.showDeleted);
+
+    this.setState({
+      searchString: searchString,
+      visible: visible
     });
   }
 
@@ -83,14 +98,25 @@ export default class QuestionEntryPage extends Component {
         <div className="header">
           <h1>
             Mister Pitt
+          </h1>
+          <div className="rightHeader">
             <input
                 type="text"
                 className="form-control searchBar"
                 onChange={(e) => this.handleSearch(e)} 
                 value={this.state.searchString} 
                 placeholder="Search" />
+          </div>
+          <div className="rightLowerHeader">
+            <input
+                type="checkbox"
+                id="showDeleted"
+                onChange={(e) => this.handleShowDeletedToggle(e)}
+                checked={this.state.showDeleted} />
+            <span className="showDeleteLabel">Show deleted</span>
             <div className="clear" />
-          </h1>
+          </div>
+          <div className="clear" />
         </div>
         <QuestionList questions={this.state.visible} />
         <h2>Add a Question</h2>

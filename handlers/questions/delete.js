@@ -1,5 +1,5 @@
-var repo = require('../data/repo');
-var rest = require('../util/rest');
+var repo = require('../../data/questionsDynamoRepo');
+var rest = require('../../util/rest');
 
 var handleDelete = function(result, response) {
   var status = 200;
@@ -12,7 +12,6 @@ var handleDelete = function(result, response) {
 var post = {
   removeQuestion : function(req, res, next) {
     var questionId = req.params['questionId'];
-
     repo.removeQuestion(questionId, function(result) {
       handleDelete(result, res);
     });

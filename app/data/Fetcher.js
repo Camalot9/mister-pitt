@@ -27,8 +27,8 @@ class Fetcher {
       headers: jsonHeaders,
       body: JSON.stringify({
         text: text,
-        difficulty: difficulty
-        //category: category
+        difficulty: difficulty,
+        category: category
       })
     })
     .then((response) => {
@@ -48,7 +48,35 @@ class Fetcher {
     });
   }
 
+  updateQuestion(questionId, text, category, difficulty, callback) {
+    fetch('/admin/questions/' + questionId, {
+      method: 'PUT',
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        text: text,
+        category: category,
+        difficulty: difficulty
+      })
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        console.log('Bad response updating answer');
+      }
+    })
+    .then((json) => {
+        callback(json);
+    })
+    .catch((e) => {
+        // TODO: Global way to display error messages.
+        console.log('there was an error updating an answer');
+        console.log(e);
+    });
+  }
+
   addAnswer(text, correct, pinned, questionId, callback) {
+    console.log('adding answer with ' + text + correct + pinned);
     fetch('/admin/questions/' + questionId + '/answers', {
       method: 'POST',
       headers: jsonHeaders,
@@ -191,6 +219,28 @@ class Fetcher {
     });
   }
 
+  undeleteAnswer(answerId, questionId, callback) {
+    fetch('/admin/questions/' + questionId + '/answers/' + answerId + '/removed', {
+      method: 'PUT',
+      headers: jsonHeaders
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        console.log('Bad response undeleting answer');
+      }
+    })
+    .then((json) => {
+        callback(json);
+    })
+    .catch((e) => {
+        // TODO: Global way to display error messages.
+        console.log('there was an error deleting an answer');
+        console.log(e);
+    });
+  }
+
   deleteQuestion(questionId, callback) {
     fetch('/admin/questions/' + questionId, {
       method: 'DELETE',
@@ -209,6 +259,28 @@ class Fetcher {
     .catch((e) => {
         // TODO: Global way to display error messages.
         console.log('there was an error deleting a question');
+        console.log(e);
+    });
+  }
+
+  undeleteQuestion(questionId, callback) {
+    fetch('/admin/questions/' + questionId + '/removed', {
+      method: 'PUT',
+      headers: jsonHeaders
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        console.log('Bad response undeleting question');
+      }
+    })
+    .then((json) => {
+        callback(json);
+    })
+    .catch((e) => {
+        // TODO: Global way to display error messages.
+        console.log('there was an error undeleting a question');
         console.log(e);
     });
   }

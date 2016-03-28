@@ -28,7 +28,8 @@ export default class AddAnswerForm extends Component {
     Fetcher.addAnswer(this.state.text, this.state.correct, this.state.pinned, this.state.questionId, (q) => this.props.addAnswerCallback(q));
     this.setState({
       text : '',
-      correct : false
+      correct : false,
+      pinned : false
     });
   }
 

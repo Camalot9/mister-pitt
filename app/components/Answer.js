@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Fetcher from '../data/Fetcher';
 
+var removedIfRemoved = function(removed) {
+  return  removed ? " removed" : "";
+};
+
 export default class Answer extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +15,7 @@ export default class Answer extends Component {
       answerId : props.answerId,
       pinned : props.pinned,
       correct : props.correct,
+      removed : props.removed,
       correctCallback : props.correctCallback
     }
   }
@@ -47,9 +52,25 @@ export default class Answer extends Component {
   }
 
   handleDeleteAnswer(event) {
-    // TODO Implement this
+    Fetcher.deleteAnswer(this.state.answerId, this.state.questionId, (response) => {
+      console.log('deleted answer');
+      console.log(response);
+      this.setState({
+        removed : true
+      });
+    });
   }
   
+  handleUndeleteAnswer(event) {
+    Fetcher.undeleteAnswer(this.state.answerId, this.state.questionId, (response) => {
+      console.log('undeleted answer');
+      console.log(response);
+      this.setState({
+        removed : false
+      });
+    });
+  }
+
   // Correctness is going to be updated by the AnswerList component, so watch for that prop
   componentWillReceiveProps(nextProps) {
     this.setState ({
@@ -58,15 +79,25 @@ export default class Answer extends Component {
   }
 
   render() {
+    var removeOrUnremove;
+    if (this.state.removed) {
+      removeOrUnremove = 
+        <div className="removeColumn unremove" onClick={(e) => this.handleUndeleteAnswer(e)}>
+          O
+        </div>;
+    } else {
+      removeOrUnremove = 
+        <div className="removeColumn remove" onClick={(e) => this.handleDeleteAnswer(e)}>
+          X
+        </div>;
+    }
     return (
       <form className="updateAnswerForm answerForm">
-        <div className="removeColumn" onClick={(e) => this.handleDeleteAnswer(e)}>
-          X
-        </div>
+        {removeOrUnremove}
         <div className="form-group"> 
           <input
             type="text"
-            className="form-control answerTextColumn"
+            className={"form-control answerTextColumn" + removedIfRemoved(this.state.removed)}
             onChange={(e) => this.handleTextChange(e)} 
             onBlur={(e) => this.submitTextChange(e)} 
             value={this.state.text} />

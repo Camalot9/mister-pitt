@@ -1,0 +1,188 @@
+.clear {
+	clear: both;
+}
+
+.questionText {
+	font-size: 14pt;
+	padding-bottom: 5px;
+	cursor: default;
+}
+
+.answerHeading {
+	font-size: 10pt;
+}
+
+.answerForm {
+	height: 30px;
+	padding-bottom: 5px;
+}
+
+.answerSection {
+	width: 500px;
+}
+
+.answerList {
+	width: 500px;
+}
+
+.removeColumn {
+	float: left;
+	padding: 5px 20px 0px 20px;
+	cursor: pointer;
+	width: 5px;
+}
+
+.remove {
+	color: red;
+}
+
+.unremove {
+	color: green;
+}
+
+.answerHeading .answerTextColumn {
+	margin-left: 40px;
+}
+
+.answerTextColumn {
+	width: 250px;
+	float: left;
+	padding-left: 20px;
+}
+
+.correctColumn {
+	width: 80px;
+	float: left;
+	padding-left: 20px;
+	text-align: center;
+}
+
+.pinnedColumn {
+	width: 80px;
+	float: left;
+	padding-left: 20px;
+	text-align: center;
+}
+
+input.correctColumn {
+	margin-top: 10px;
+	margin-left: 40px;
+}
+
+input.pinnedColumn {
+	margin-top: 10px;
+}
+
+.addAnswerForm {
+	width: 700px;
+	margin-bottom: 50px;
+}
+
+.addAnswerInputs .answerTextColumn {
+	margin-left: 40px;
+}
+
+.addAnswerInputs {
+	width: 500px;
+}
+
+input.submitColumn {
+	width: 75px;
+	float:left;
+}
+
+.form-group input.questionTextInput {
+	width: 700px;
+	margin-right: 20px;
+}
+
+.form-group input.categoryTextInput {
+	width: 250px;
+	margin-right: 20px;
+}
+
+.form-group select.difficultyInput {
+	width: 50px;
+	margin-right: 20px;
+}
+
+.addQuestionForm {
+	padding-bottom: 50px;
+}
+
+.questionUpdateSection {
+	display: none;
+}
+
+.questionUpdate {
+	width: 1100px;
+}
+
+.updateQuestionForm {
+	padding-bottom: 30px;
+}
+
+.removeQuestion {
+	float: left;
+	font-size: 12pt;
+	cursor: pointer;
+	margin-right: 20px;
+	margin-top: 5px;
+}
+
+.updateQuestionText {
+	width: 700px;
+	float: left;
+	margin-right: 20px;
+}
+
+.updateQuestionCategory {
+	width: 250px;
+	float: left;
+	margin-right: 20px;
+}
+
+.updateQuestionDifficulty {
+	width: 50px;
+	float: left;
+}
+
+.searchBar {
+	width: 400px;
+	float: right;
+}
+
+#showDeleted {
+	float: right;
+	margin-top: 15px;
+}
+
+.showDeleteLabel {
+	font-size: 14px;
+	float: right;
+	padding-top: 10px;
+	padding-right: 10px;
+	font-style: italic;
+}
+
+.rightLowerHeader {
+	width: 100%;
+}
+
+.rightHeader {
+	float: right;
+	width: 100%;
+}
+
+.header {
+	height: 50px;
+}
+
+.removed {
+	text-decoration: line-through;
+	color: #808080;
+}
+
+.questionList {
+	margin-top: 80px;
+}

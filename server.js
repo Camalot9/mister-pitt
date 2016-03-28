@@ -1,26 +1,32 @@
 'use strict';
 const restify = require('restify');
-const getEndpoints = require('./handlers/get');
-const postEndpoints = require('./handlers/post');
-const deleteEndpoints = require('./handlers/delete');
-const putEndpoints = require('./handlers/put');
+const getQuestionsEndpoints = require('./handlers/questions/get');
+const postQuestionsEndpoints = require('./handlers/questions/post');
+const deleteQuestionsEndpoints = require('./handlers/questions/delete');
+const putQuestionsEndpoints = require('./handlers/questions/put');
 
 class MisterPitt {
 	constructor() {
 		var server = restify.createServer();
 		server.use(restify.bodyParser({ mapParams: false }));
-		server.get('/admin/questions', getEndpoints.allQuestions);
-		server.get('/admin/questions/summary', getEndpoints.questionsSummary);
-		server.get('/admin/questions/:questionId', getEndpoints.question);
-		server.post('/admin/questions', postEndpoints.addQuestion);
-		server.post('/admin/questions/:questionId/answers', postEndpoints.addAnswer);
-		server.put('/admin/questions/:questionId', putEndpoints.updateQuestion);
-		server.put('/admin/questions/:questionId/answers/:answerId', putEndpoints.updateAnswerText);
-		server.put('/admin/questions/:questionId/answers/:answerId/pinned', putEndpoints.pinAnswer);
-		server.put('/admin/questions/:questionId/answers/:answerId/correct', putEndpoints.updateAnswerCorrect);
-		server.del('/admin/questions/:questionId', deleteEndpoints.removeQuestion);
-		server.del('/admin/questions/:questionId/answers/:answerId', deleteEndpoints.removeAnswer);
-		server.del('/admin/questions/:questionId/answers/:answerId/pinned', deleteEndpoints.unpinAnswer);
+
+		// Questions Endpoints
+		server.get('/admin/questions', getQuestionsEndpoints.allQuestions);
+		server.get('/admin/questions/summary', getQuestionsEndpoints.questionsSummary);
+		server.get('/admin/questions/:questionId', getQuestionsEndpoints.question);
+		server.post('/admin/questions', postQuestionsEndpoints.addQuestion);
+		server.post('/admin/questions/:questionId/answers', postQuestionsEndpoints.addAnswer);
+		server.put('/admin/questions/:questionId', putQuestionsEndpoints.updateQuestion);
+		server.put('/admin/questions/:questionId/removed', putQuestionsEndpoints.undeleteQuestion);
+		server.put('/admin/questions/:questionId/answers/:answerId', putQuestionsEndpoints.updateAnswerText);
+		server.put('/admin/questions/:questionId/answers/:answerId/pinned', putQuestionsEndpoints.pinAnswer);
+		server.put('/admin/questions/:questionId/answers/:answerId/correct', putQuestionsEndpoints.updateAnswerCorrect);
+		server.put('/admin/questions/:questionId/answers/:answerId/removed', putQuestionsEndpoints.undeleteAnswer);
+		server.del('/admin/questions/:questionId', deleteQuestionsEndpoints.removeQuestion);
+		server.del('/admin/questions/:questionId/answers/:answerId', deleteQuestionsEndpoints.removeAnswer);
+		server.del('/admin/questions/:questionId/answers/:answerId/pinned', deleteQuestionsEndpoints.unpinAnswer);
+
+
 
 		server.get(/\/pitt\/(css|js|fonts|build)\/?.*/, restify.serveStatic({
 		  'directory': './public',

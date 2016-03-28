@@ -1,5 +1,5 @@
-var repo = require('../data/repo');
-var rest = require('../util/rest');
+var repo = require('../../data/questionsDynamoRepo');
+var rest = require('../../util/rest');
 
 var handleUpdate = function(result, response) {
   var status = 200;
@@ -14,7 +14,17 @@ var post = {
     var questionId = req.params['questionId'];
     var updateRequest = req.body;
 
-    repo.updateQuestion(questionId, updateRequest.text, updateRequest.difficulty, function(result) {
+    repo.updateQuestion(questionId, updateRequest.text, updateRequest.difficulty, updateRequest.category, function(result) {
+      handleUpdate(result, res);
+    });
+
+    next();
+  },
+
+  undeleteQuestion : function(req, res, next) {
+    var questionId = req.params['questionId'];
+
+    repo.unremoveQuestion(questionId, function(result) {
       handleUpdate(result, res);
     });
 
@@ -27,6 +37,17 @@ var post = {
     var updateRequest = req.body;
 
     repo.updateAnswerText(questionId, answerId, updateRequest.text, function(result) {
+      handleUpdate(result, res);
+    });
+
+    next();
+  },
+
+  undeleteAnswer : function(req, res, next) {
+    var questionId = req.params['questionId'];
+    var answerId = req.params['answerId'];
+
+    repo.unremoveAnswer(questionId, answerId, function(result) {
       handleUpdate(result, res);
     });
 

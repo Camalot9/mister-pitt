@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mister Pitt</title>
+    <!-- Not present in the tutorial. Just for basic styling. -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/base.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script type="javascript">
+      var findQuestion(quesitonId, questions) {
+        for (var i=0; i < questions.length; i++) {
+          if (questions[i].id === questionId) {
+            return questions[i];
+          }
+        }
+        return null;
+      };
+    </script>
+
+    <script type="text/babel">
+var Answer = React.createClass({
+  render: function() {
+    return (
+      <div className="answer" id="{this.props.id}">{this.props.text}</div>
+      // Put radio button for pinned, correct, and removed
+    );
+  }
+});
+
+var Question = React.createClass({
+  rawMarkup: function() {
+    var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
+    return { __html: rawMarkup };
+  },
+
+  // Handle clicking on a question, which should show the answers
+  handleClick: function(identifier) {
+    var startDisplay = document.getElementById(identifier).style.display;
+    var endDisplay = startDisplay === 'block' ? 'none' : 'block';
+    document.getElementById(identifier).style.display = endDisplay;
+  },
+
+  render: function() {
+    var answerNodes = this.props.answers.map(function(answer) {
+      return (
+        <Answer text={answer.text}
+                id={answer.id}
+                correct={answer.correct}
+                pinned={answer.pinned}>
+        </Answer>
+        );
+    });
+    var answerListId = "answers_" + this.props.id;
+    var boundClick = this.handleClick.bind(this, answerListId);
+    return (
+      <div className="question">
+        <div onClick={boundClick}>
+          <div className="difficultyDisplay">{this.props.difficulty}</div>
+          <div className="questionText">{this.props.question}</div>
+        </div>
+        <div className="answerList" id={answerListId}>
+          {answerNodes}
+        </div>
+      </div>
+    );
+  }
+});
+
+// tutorial2.js
+var QuestionList = React.createClass({
+  render: function() {
+    var questionNodes = this.props.data.map(function(question) {
+      return (
+        <Question question={question.question} 
+                  id={question.id}
+                  difficulty={question.difficulty}
+                  answers={question.answers}>
+        </Question>
+      );
+    });
+    return (
+      <div className="questionList">
+        {questionNodes}
+      </div>
+    );
+  }
+});
+
+var QuestionForm = React.createClass({
+  getInitialState: function() {
+    return {question: '', difficulty: 'EASY'};
+  },
+  handleTextChange: function(e) {
+    this.setState({question: e.target.value});
+  },
+  handleDifficultyChange: function(e) {
+    this.setState({difficulty: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+
+    // TODO How do I get the value in form fields if I haven't saved them in the state?
+    var question = this.state.question.trim();
+    if (!question) {
+      return;
+    }
+
+    this.props.onQuestionSubmit({
+      'text': question,
+      'difficulty' : this.state.difficulty
+    });
+    this.setState({question: '', difficulty : 'EASY'});
+  },
+  render: function() {
+    return (
+      <form className="form-inline questionForm" onSubmit={this.handleSubmit}>
+        <div className="form-group"> 
+          <input
+            type="text"
+            className="form-control questionText"
+            placeholder="What's the deal with..."
+            value={this.state.question}
+            onChange={this.handleTextChange} />
+        </div>
+        <div className="form-group">
+          <select className="form-control difficulty" value={this.state.difficulty} onChange={this.handleDifficultyChange}>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+            <option value="EXPERT">Expert</option>
+          </select>
+        </div>
+        <input className="btn btn-default" type="submit" value="Add" />
+      </form>
+    );
+  }
+});
+
+var AnswerForm = React.createClass({
+  getInitialState: function() {
+    return {answerText: '', correct: false, pinned: false};
+  },
+  handleTextChange: function(e) {
+    this.setState({answerText: e.target.value});
+  },
+  handleCorrectChange: function(e) {
+    this.setState({correct: e.target.value});
+  },
+  handlePinnedChange: function(e) {
+    this.setState({pinned: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+
+    var answer = this.state.answer.trim();
+    if (!answer) {
+      return;
+    }
+
+    this.props.onAnswerSubmit(this.state.lastQuestionID, {
+      'text': answer,
+      'correct' : this.state.correct,
+      'pinned' : this.state.pinned
+    });
+    this.setState({answerText: '', correct: false, pinned: false});
+  },
+  render: function() {
+    return (
+      <form className="form-inline answerForm" onSubmit={this.handleSubmit}>
+        <div className="form-group"> 
+          <input
+            type="text"
+            className="form-control answerInput"
+            placeholder="Mr Marbles..."
+            value={this.state.answer}
+            onChange={this.handleTextChange} />
+        </div>
+        <div className="form-group">
+          Correct: 
+          <input className="checkbox correctInput" type="checkbox" value={this.state.correct} />
+          Pinned: 
+          <input className="checkbox pinnedInput" type="checkbox" value={this.state.pinned} />
+        </div>
+        <input className="btn btn-default" type="submit" value="Add" />
+      </form>
+    );
+  }
+});
+
+
+// tutorial1.js
+var Main = React.createClass({
+  loadQuestionsFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleQuestionSubmit: function(question) {
+    var questions = this.state.data;
+
+    console.log(question);
+
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: question,
+      success: function(data) {
+        this.setState({
+          lastQuestionID: data.id,
+          data: questions.concat([data])
+        });
+      }.bind(this),
+      error: function(xhr, status, err) {
+        alert('couldnt add question: ' + err.toString());
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleAnswerSubmit: function(questionId, answer) {
+    var question = findQuestion(questionId, this.state.data);
+    if (question == null) {
+      alert('Couldnt find question ' + questionId);
+      return;
+    }
+
+    $.ajax({
+      url: '/admin/questions/' + questionId + '/answers',
+      dataType: 'json',
+      type: 'POST',
+      data: answer,
+      success: function(data) {
+        this.setState({data: question.answers.concat([data])}); 
+      }.bind(this),
+      error: function(xhr, status, err) {
+        alert('couldnt add question: ' + err.toString());
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadQuestionsFromServer();
+    // This is where they setup the timer but I don't think I want to
+  },
+  render: function() {
+    return (
+      <div className="commentBox">
+        <h1>Recent Questions</h1>
+        <QuestionList data={this.state.data} />
+        <QuestionForm onQuestionSubmit={this.handleQuestionSubmit} />
+        <AnswerForm onAnswerSubmit={this.handleAnswerSubmit} />
+      </div>
+    );
+  }
+});
+ReactDOM.render(
+  <Main url="/admin/questions?limit=10" />,
+  document.getElementById('content')
+);
+
+    </script>
+  </body>
+</html>
