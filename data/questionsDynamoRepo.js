@@ -1,4 +1,3 @@
-var cassandra = require('cassandra-driver');
 var config = require('../config/config');
 var uuid = require('node-uuid');
 var async = require('async');
@@ -52,25 +51,28 @@ var transformAnswer = function(repoAnswer, isCorrect) {
   };
 };
 
-var transformAnswers = function(answerMap, correctAnswer) {
+var transformAnswers = function(answerMap, correctAnswer, includeRemovedAnswers) {
   var answerList = [];
   if (answerMap) {
     var keys = Object.keys(answerMap);
     for (var i=0; i < keys.length; i++) {
-      answerList.push(transformAnswer(answerMap[keys[i]], correctAnswer === answerMap[keys[i]].id)); 
+      var answer = answerMap[keys[i]];
+      if (includeRemovedAnswers || !answer.removed) {
+        answerList.push(transformAnswer(answer, correctAnswer === answer.id)); 
+      }
     }
   }
   return answerList;
 };
 
-var transformQuestion = function(repoQuestion) {
+var transformQuestion = function(repoQuestion, includeRemovedAnswers) {
   return {
     id : repoQuestion.id,
     text : repoQuestion.text,
     difficulty : repoQuestion.difficulty,
     category : repoQuestion.category,
     removed : repoQuestion.removed,
-    answers : transformAnswers(repoQuestion.answers, repoQuestion.correctAnswer)
+    answers : transformAnswers(repoQuestion.answers, repoQuestion.correctAnswer, includeRemovedAnswers)
   };
 };
 
@@ -88,7 +90,7 @@ var failResponse = function(message) {
 
 var repo = {
 
-  getQuestions : function(limit, callback) {
+  getQuestions : function(limit, includeRemoved, callback) {
     client.scan({ TableName: QUESTION_TABLE }, function(err, data) {
       if (err) {
         console.log('fail response: ' + JSON.stringify(err, null, 2));
@@ -99,8 +101,11 @@ var repo = {
         callback([]);
       } else {
         var questions = [];
-        for (var i=0; i < limit && i < data.Items.length; i++) {
-          questions.push(transformQuestion(data.Items[i]));
+        var questionLimit = (limit && limit > 0) ? limit : data.Items.length;
+        for (var i=0; i < questionLimit && i < data.Items.length; i++) {
+          if (!data.Items[i].removed || includeRemoved) {
+            questions.push(transformQuestion(data.Items[i], includeRemoved));
+          }
         }
         callback(questions);
       }

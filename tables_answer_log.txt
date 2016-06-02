@@ -1,0 +1,69 @@
+var params = {
+    TableName: 'answerLog',
+    KeySchema: [ // The type of of schema.  Must start with a HASH type, with an optional second RANGE.
+        { // Required HASH type attribute
+            AttributeName: 'gameId',
+            KeyType: 'HASH',
+        },
+        { // Optional RANGE key type for HASH + RANGE tables
+            AttributeName: 'answerLogId', 
+            KeyType: 'RANGE', 
+        }
+    ],
+    AttributeDefinitions: [ // The names and types of all primary and index key attributes only
+        {
+            AttributeName: 'gameId',
+            AttributeType: 'S', // (S | N | B) for string, number, binary
+        },
+        {
+            AttributeName: 'answerLogId',
+            AttributeType: 'S', // (S | N | B) for string, number, binary
+        },
+        {
+            AttributeName: 'profileId',
+            AttributeType: 'S', // (S | N | B) for string, number, binary
+        },
+        {
+            AttributeName: 'timestamp',
+            AttributeType: 'N', // (S | N | B) for string, number, binary
+        }
+        // ... more attributes ...
+    ],
+    ProvisionedThroughput: { // required provisioned throughput for the table
+        ReadCapacityUnits: 1, 
+        WriteCapacityUnits: 1, 
+    },
+    GlobalSecondaryIndexes: [ // optional (list of GlobalSecondaryIndex)
+        { 
+            IndexName: 'questionsAskedByProfile', 
+            KeySchema: [
+                { // Required HASH type attribute
+                    AttributeName: 'profileId',
+                    KeyType: 'HASH',
+                },
+                { // Optional RANGE key type for HASH + RANGE secondary indexes
+                    AttributeName: 'timestamp', 
+                    KeyType: 'RANGE', 
+                }
+            ],
+            Projection: { // attributes to project into the index
+                ProjectionType: 'INCLUDE', // (ALL | KEYS_ONLY | INCLUDE)
+                NonKeyAttributes: [ // required / allowed only for INCLUDE
+                    'correct',
+                    'questionId'
+                    // ... more attribute names ...
+                ],
+            },
+            ProvisionedThroughput: { // throughput to provision to the index
+                ReadCapacityUnits: 1,
+                WriteCapacityUnits: 1,
+            },
+        },
+        // ... more global secondary indexes ...
+    ]
+};
+dynamodb.createTable(params, function(err, data) {
+    if (err) ppJson(err); // an error occurred
+    else ppJson(data); // successful response
+
+});

@@ -1,5 +1,5 @@
 {
-  "description" : "An admin page for creating trivia questions.",
+  "description": "An admin page for creating trivia questions.",
   "main": "server.js",
   "scripts": {
     "lint": "eslint app",
@@ -9,6 +9,7 @@
   "author": "Cameron",
   "license": "MIT",
   "dependencies": {
+    "node-uuid": "^1.4.7",
     "react": "^0.14.6",
     "react-dom": "^0.14.7",
     "restify": "^4.0.3"
