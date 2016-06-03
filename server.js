@@ -6,6 +6,7 @@ const deleteQuestionsEndpoints = require('./handlers/questions/delete');
 const putQuestionsEndpoints = require('./handlers/questions/put');
 const postGameEndpoints = require('./handlers/game/post');
 const getGameEndpoints = require('./handlers/game/get');
+const postProfileEndpoints = require('./handlers/profiles/post');
 
 class MisterPitt {
 	constructor() {
@@ -28,7 +29,6 @@ class MisterPitt {
 		server.del('/admin/questions/:questionId/answers/:answerId/pinned', deleteQuestionsEndpoints.unpinAnswer);
 
 
-
 		// Game endpoints
 		server.get('/games/:gameId', getGameEndpoints.getGame);
 		server.get('/games/join/:token', getGameEndpoints.getJoinStatus);
@@ -39,6 +39,8 @@ class MisterPitt {
 		server.post('/games/:gameId/turns/:turn', postGameEndpoints.answerQuestion);
 
 
+		// Profile endpoints
+		server.post('/profiles', postProfileEndpoints.createProfile);
 
 		server.get(/\/pitt\/(css|js|fonts|build)\/?.*/, restify.serveStatic({
 		  'directory': './public',

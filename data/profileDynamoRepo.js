@@ -46,9 +46,12 @@ var updateResponse = function(success, message, code) {
 
 var repo = {
 
+
 	createAccount : function(deviceIdentifier, callback) {
 		repo.getAccount(deviceIdentifier, function(response) {
 			if (response.error === true) {
+				callback(updateResponse(false, 'Database error retreiving account info: ' + response.message, 'DATASOURCE_ERROR'));
+			} else if (response) {
 				callback(updateResponse(false, 'Account ' + deviceIdentifier + ' is already registered.', 'ACCOUNT_EXISTS'));
 			} else {
 				var profile = newProfile(deviceIdentifier);

@@ -2,6 +2,7 @@ var profileRepo = require('../../data/profileDynamoRepo');
 var rest = require('../../util/rest');
 
 var post = {
+  // Was this moved to the game handler?
   answered : function(req, res, next) {
     var answer = req.body;
     var profileId = req.params.profileId;
@@ -19,6 +20,19 @@ var post = {
     });
 
     next();
+  },
+
+  createProfile : function(req, res, next) {
+    var deviceId = req.body.deviceId;
+    profileRepo.createAccount(deviceId, function(profile) {
+      if (profile.error) {
+        res.send(400, profile);
+      }
+      else {
+        res.send(201, profile);
+      }
+      next();
+    });
   }
 };
 
